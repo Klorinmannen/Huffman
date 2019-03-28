@@ -11,7 +11,7 @@ private:
 	std::string mBinaryCode;
 
 public:
-	LeafNode() { mSymbol = '-1'; mFrequency = 0; mBinaryCode = ""; }
+	LeafNode() { mSymbol = '\0'; mFrequency = 0; mBinaryCode = ""; }
 	virtual ~LeafNode(){}
 
 	void SetSymbol(const char & _symbol) { mSymbol = _symbol; }

@@ -21,48 +21,50 @@ void HuffmanTree::computeFrequency()
 
 void HuffmanTree::buildTree()
 {
-	std::shared_ptr<LeafNode> pLeafPtr = nullptr;
+	std::shared_ptr<LeafNode> pLeafOne = nullptr;
 	std::shared_ptr<LeafNode> pLeafTwo = nullptr;
 	std::shared_ptr<InternalNode> pInternalPtr = nullptr;
 
 	for (unsigned int i = 0; i < mCharacters.size(); i++)
 	{
-		pLeafPtr = std::make_unique<LeafNode>();
-		pLeafPtr->SetFrequency(mFrequency[i]);
-		pLeafPtr->SetSymbol(mCharacters[i]);
-		mQueue.push(pLeafPtr);
+		pLeafOne = std::make_unique<LeafNode>();
+		pLeafOne->SetFrequency(mFrequency[i]);
+		pLeafOne->SetSymbol(mCharacters[i]);
+		mNodes.push(pLeafOne);
 	}
 
-	while (mQueue.size() > 1)
+	//std::sort(mNodes.begin(), mNodes.end(), Compare());
+
+	while (mNodes.size() > 1)
 	{
-		pLeafPtr = mQueue.top();
-		mQueue.pop();
-		if (mQueue.size() > 0)
+		pLeafOne = mNodes.top();
+		mNodes.pop();
+		if (mNodes.size() > 0)
 		{
-			pLeafTwo = mQueue.top();
-			mQueue.pop();
+			pLeafTwo = mNodes.top();
+			mNodes.pop();
 
 			pInternalPtr = std::make_shared<InternalNode>();
-			pInternalPtr->SetFrequency(pLeafPtr->GetFrequency() + pLeafTwo->GetFrequency());
-			pInternalPtr->SetLeftChild(pLeafPtr);
+			pInternalPtr->SetFrequency(pLeafOne->GetFrequency() + pLeafTwo->GetFrequency());
+			pInternalPtr->SetLeftChild(pLeafOne);
 			pInternalPtr->SetRightChild(pLeafTwo);
 
-			mQueue.push(pInternalPtr);
+			mNodes.push(pInternalPtr);
 		}
 		else
 		{
 			pInternalPtr = std::make_shared<InternalNode>();
-			pInternalPtr->SetFrequency(pLeafPtr->GetFrequency());
-			pInternalPtr->SetLeftChild(pLeafPtr);
+			pInternalPtr->SetFrequency(pLeafOne->GetFrequency());
+			pInternalPtr->SetLeftChild(pLeafOne);
 		}
+
+		//std::sort(mNodes.begin(), mNodes.end(), Compare());
 	}
 
-	mRoot = mQueue.top();
-	while (!mQueue.empty())
-		mQueue.pop();
-
-	//not sure if needed.. 
-	pLeafPtr.reset();
+	mRoot = mNodes.top();
+	mNodes.pop();
+ 
+	pLeafOne.reset();
 	pLeafTwo.reset();
 	pInternalPtr.reset();
 }
@@ -78,16 +80,16 @@ void HuffmanTree::buildBinaryCode(const std::shared_ptr<LeafNode> & _node)
 		buildBinaryCode(temp->GetLeftChild());
 		mBinaryCode += "1";
 		buildBinaryCode(temp->GetRightChild());
+
+		return;
 	}
 	if (_node != nullptr)
 	{
 		_node->SetBinaryCode(mBinaryCode);
-		mBinaryCode.clear();
+		if (mBinaryCode.size() > 0)
+			mBinaryCode.pop_back();
 	}
-	
-	//conern case
-	if (mBinaryCode.size() > 0)
-		mBinaryCode.pop_back();
+
 }
 
 void HuffmanTree::init()

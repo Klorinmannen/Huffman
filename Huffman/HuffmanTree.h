@@ -13,20 +13,21 @@ private:
 	public:
 		bool operator()(const std::shared_ptr<LeafNode> & lhs, const std::shared_ptr<LeafNode> & rhs) const
 		{
-			return lhs->GetFrequency() > rhs->GetFrequency();
+			return lhs->GetFrequency() < rhs->GetFrequency();
 		}
 	};
 
 	std::priority_queue<
 		std::shared_ptr<LeafNode>, 
 		std::vector<std::shared_ptr<LeafNode>>, 
-		Compare> mQueue;
-
+		Compare> mNodes;
+	
+	//std::deque<std::shared_ptr<LeafNode>> mNodes;
 	std::shared_ptr<LeafNode> mRoot;
 	std::vector<unsigned int> mCalcFrequency;
 	std::vector<std::shared_ptr<LeafNode>> s;
 
-	//**** runs in parallel
+	//**** runs in parallel - maybe use a touple?
 	std::vector<char> mCharacters;
 	std::vector<unsigned int> mFrequency;
 	//****
