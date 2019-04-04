@@ -33,7 +33,6 @@ private:
 	unsigned int ASCII_SIZE;
 
 	void readFromFile(const std::string & _path);
-	void buildTreeCode();
 	void computeFrequency();
 	void buildTree();
 	void traverseTree(const std::shared_ptr<LeafNode> & _node, const int & _arg);

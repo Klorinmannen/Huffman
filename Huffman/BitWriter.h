@@ -20,6 +20,7 @@ private:
 		mTotalBinaryCode.clear();
 		mTreeCode.clear();
 		mSymbolsMap.clear();
+		return;
 	}
 public:
 	BitWriter()
@@ -35,15 +36,17 @@ public:
 	void WriteBit(const int & _bit)
 	{
 		if (_bit != -1)
-			mTempCode.push_back(_bit);
+			mTempCode += std::to_string(_bit);
 		else if(!mTempCode.empty())
 			mTempCode.pop_back();
 
+		return;
 	}
 
 	void WriteSymbol(const char & _char)
 	{
 		mSymbolsMap.insert(std::make_pair(_char, mTempCode));
+		return;
 	}
 
 	std::string & GetTotalBinaryCodeString(const std::string & _text)
@@ -51,7 +54,7 @@ public:
 		mTotalBinaryCode.clear();
 
 		for (auto text = _text.begin(); text != _text.end(); ++text)
-			mTotalBinaryCode += mSymbolsMap.find(*text)->second;
+			mTotalBinaryCode += (mSymbolsMap.find(*text)->second);
 
 		return mTotalBinaryCode;
 	}
@@ -75,5 +78,6 @@ public:
 	void Reset()
 	{
 		reset();
+		return;
 	}
 };

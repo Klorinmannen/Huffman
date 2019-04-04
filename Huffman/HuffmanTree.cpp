@@ -5,11 +5,6 @@ void HuffmanTree::readFromFile(const std::string & _path)
 	mFileReader.ReadFile(_path);
 }
 
-void HuffmanTree::buildTreeCode()
-{
-
-}
-
 void HuffmanTree::computeFrequency()
 {
 	//For each time a character in the text appears, +1 frequency.
@@ -97,6 +92,7 @@ void HuffmanTree::traverseTree(const std::shared_ptr<LeafNode>& _node, const int
 	{
 
 	case FLAGS::CREATE_BINARY_CODE:
+	{
 		if (temp)
 		{
 			mBitWriter.WriteBit(0);
@@ -113,7 +109,7 @@ void HuffmanTree::traverseTree(const std::shared_ptr<LeafNode>& _node, const int
 		}
 
 		mBitWriter.WriteBit(-1);
-
+	}
 		break;
 	case FLAGS::PRINT_TREE:
 		if (temp)
@@ -207,6 +203,14 @@ bool HuffmanTree::MainFromTextFile(const std::string & _path)
 	buildTree();
 	traverseTree(mRoot, FLAGS::CREATE_BINARY_CODE);
 
+	std::string test;
+	test = mBitWriter.GetTotalBinaryCodeString(mFileReader.GetText());
+	test = mBitWriter.GetTreeCode();
+
+	if (1)
+	{
+
+	}
 
 #ifdef _DEBUG
 
