@@ -18,17 +18,17 @@ void HuffmanTree::computeFrequency()
 	std::string temp = mFileReader.GetText();
 	for (auto text = temp.begin(); text != temp.end(); ++text)
 	{
-		if (mCharsnFreq[static_cast<int>(*text)].first == '\0')
-			mCharsnFreq[static_cast<int>(*text)].first = *text;
+		if (mCharsFreq[static_cast<int>(*text)].first == '\0')
+			mCharsFreq[static_cast<int>(*text)].first = *text;
 
-		mCharsnFreq[static_cast<int>(*text)].second += 1;
+		mCharsFreq[static_cast<int>(*text)].second += 1;
 	}
 
 	//Clean up empty spaces
-	for (auto obj = mCharsnFreq.begin(); obj != mCharsnFreq.end();)
+	for (auto obj = mCharsFreq.begin(); obj != mCharsFreq.end();)
 	{
 		if (obj->first == '\0')
-			obj = mCharsnFreq.erase(obj);
+			obj = mCharsFreq.erase(obj);
 		else
 			obj++;
 	}
@@ -42,11 +42,11 @@ void HuffmanTree::buildTree()
 	std::shared_ptr<LeafNode> pLeafTwo = nullptr;
 	std::shared_ptr<InternalNode> pInternalPtr = nullptr;
 
-	for (unsigned int i = 0; i < mCharsnFreq.size(); i++)
+	for (unsigned int i = 0; i < mCharsFreq.size(); i++)
 	{
 		pLeafOne = std::make_shared<LeafNode>();
-		pLeafOne->SetWeigth(mCharsnFreq[i].second);
-		pLeafOne->SetSymbol(mCharsnFreq[i].first);
+		pLeafOne->SetWeigth(mCharsFreq[i].second);
+		pLeafOne->SetSymbol(mCharsFreq[i].first);
 		mNodes.push_back(pLeafOne);
 	}
 
@@ -143,8 +143,8 @@ void HuffmanTree::traverseTree(const std::shared_ptr<LeafNode>& _node, const int
 
 void HuffmanTree::init()
 {
-	mCharsnFreq.resize(ASCII_SIZE);
-	for (auto obj = mCharsnFreq.begin(); obj != mCharsnFreq.end(); ++obj)
+	mCharsFreq.resize(ASCII_SIZE);
+	for (auto obj = mCharsFreq.begin(); obj != mCharsFreq.end(); ++obj)
 		*obj = std::make_pair('\0', 0);
 
 }
@@ -153,8 +153,10 @@ void HuffmanTree::reset()
 {
 
 	mRoot.reset();
-	mCharsnFreq.clear();
+	mCharsFreq.clear();
 	mNodes.clear();
+	mBitWriter.Reset();
+	mFileReader.Reset();
 
 	return;
 }
@@ -210,15 +212,6 @@ bool HuffmanTree::MainFromTextFile(const std::string & _path)
 
 #endif
 
-	return true;
-}
-
-bool HuffmanTree::WriteBinaryCodeToFile(const std::string & _fileName)
-{
-	if (mBinaryCode.empty() || _fileName.empty())
-		return false;
-
-	writeToFile(_fileName);
 	return true;
 }
 

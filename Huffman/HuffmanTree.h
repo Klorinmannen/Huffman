@@ -27,11 +27,9 @@ private:
 
 	BitWriter mBitWriter;
 	FileReader mFileReader;
-
 	std::deque<std::shared_ptr<LeafNode>> mNodes;
 	std::shared_ptr<InternalNode> mRoot;
 	std::vector<std::pair<char, unsigned int>> mCharsFreq;
-
 	unsigned int ASCII_SIZE;
 
 	void readFromFile(const std::string & _path);
@@ -48,9 +46,9 @@ public:
 	HuffmanTree(unsigned int _ascii_size);
 	~HuffmanTree();
 
+	//MISC
 	bool MainFromString(const std::string & _text);
 	bool MainFromTextFile(const std::string & _path);
-	bool WriteBinaryCodeToFile(const std::string & _fileName);
 	bool PrintTree();
 	bool ResetTree();
 
