@@ -119,6 +119,8 @@
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BitWriter.h" />
+    <ClInclude Include="FileReader.h" />
     <ClInclude Include="HuffmanTree.h" />
     <ClInclude Include="InternalNode.h" />
     <ClInclude Include="LeafNode.h" />

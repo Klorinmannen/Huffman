@@ -5,13 +5,16 @@
 #include<iostream>
 #include<unordered_map>
 #include<fstream>
+
 #include"InternalNode.h"
+#include"BitWriter.h"
+#include"FileReader.h"
 
 class HuffmanTree
 {
 private:
 
-	enum FLAGS{PRINT, CREATE_BINARY_CODE};
+	enum FLAGS{PRINT_TREE, CREATE_BINARY_CODE, SAVE_TREE};
 
 	class Compare
 	{
@@ -22,26 +25,24 @@ private:
 		}
 	};
 
+	BitWriter mBitWriter;
+	FileReader mFileReader;
+
 	std::deque<std::shared_ptr<LeafNode>> mNodes;
 	std::shared_ptr<InternalNode> mRoot;
-	std::unordered_map<char, std::string> mSymbolsMap;
-	std::vector<std::pair<char, unsigned int>> mCharsnFreq;
+	std::vector<std::pair<char, unsigned int>> mCharsFreq;
 
-	std::string mBinaryCode;
-	std::string mText;
-	std::string mPath;
 	unsigned int ASCII_SIZE;
 
-	void readFromFile();
-	void writeToFile(const std::string & _fileName);
-	void buildBinaryCode();
-	void manageBinaryCode(const int & _arg);
+	void readFromFile(const std::string & _path);
+	void buildTreeCode();
 	void computeFrequency();
 	void buildTree();
 	void traverseTree(const std::shared_ptr<LeafNode> & _node, const int & _arg);
 	void init();
 	void reset();
-	void printCompression();
+	void computeBitSize();
+
 public:
 	HuffmanTree();
 	HuffmanTree(unsigned int _ascii_size);
@@ -52,6 +53,5 @@ public:
 	bool WriteBinaryCodeToFile(const std::string & _fileName);
 	bool PrintTree();
 	bool ResetTree();
-	std::string GetBinaryCode() const;
 
 };

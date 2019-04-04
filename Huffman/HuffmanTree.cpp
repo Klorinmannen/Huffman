@@ -1,67 +1,22 @@
 #include "HuffmanTree.h"
 
-void HuffmanTree::readFromFile()
+void HuffmanTree::readFromFile(const std::string & _path)
 {
-	std::string temp = "";
-	std::fstream inStream;
-
-	inStream.open(mPath, std::ios::in);
-	while (std::getline(inStream, temp))
-		mText += temp;
-		
-	inStream.close();
-
-	return;
+	mFileReader.ReadFile(_path);
 }
 
-void HuffmanTree::writeToFile(const std::string & _fileName)
+void HuffmanTree::buildTreeCode()
 {
 
-	std::fstream outStream;
-	outStream.open(_fileName, std::ios::out);
-	outStream << mBinaryCode;
-	outStream.close();
-
-	return;
-}
-
-void HuffmanTree::buildBinaryCode()
-{
-	mBinaryCode.clear();
-	
-	for (auto text = mText.begin(); text != mText.end(); ++text)
-		mBinaryCode += mSymbolsMap.find(*text)->second;
-	
-	return;
-}
-
-void HuffmanTree::manageBinaryCode(const int & _arg)
-{
-	switch (_arg)
-	{
-	case 0:
-		mBinaryCode += "0";
-
-		break;
-	case 1:
-		mBinaryCode += "1";
-
-		break;
-	case -1:
-		if (mBinaryCode.size() > 0)
-			mBinaryCode.pop_back();
-
-		break;
-	}
-
-	return;
 }
 
 void HuffmanTree::computeFrequency()
 {
 	//For each time a character in the text appears, +1 frequency.
 	//For each character check if theres a frequency and if there is, store char with its frequency
-	for (auto text = mText.begin(); text != mText.end(); ++text)
+	
+	std::string temp = mFileReader.GetText();
+	for (auto text = temp.begin(); text != temp.end(); ++text)
 	{
 		if (mCharsnFreq[static_cast<int>(*text)].first == '\0')
 			mCharsnFreq[static_cast<int>(*text)].first = *text;
@@ -144,29 +99,31 @@ void HuffmanTree::traverseTree(const std::shared_ptr<LeafNode>& _node, const int
 	case FLAGS::CREATE_BINARY_CODE:
 		if (temp)
 		{
-			manageBinaryCode(0);
+			mBitWriter.WriteBit(0);
 			traverseTree(temp->GetLeftChild(), FLAGS::CREATE_BINARY_CODE);
-			manageBinaryCode(1);
+			mBitWriter.WriteBit(1);
 			traverseTree(temp->GetRightChild(), FLAGS::CREATE_BINARY_CODE);
 
 		}
 		else
 		{
-			_node->SetBinaryCode(mBinaryCode);
-			mSymbolsMap[_node->GetSymbol()] = mBinaryCode;
+			//leaf node
+			_node->SetBinaryCode(mBitWriter.GetBinaryCode());
+			mBitWriter.WriteSymbol(_node->GetSymbol());
 		}
 
-		manageBinaryCode(-1);
+		mBitWriter.WriteBit(-1);
 
 		break;
-	case FLAGS::PRINT:
+	case FLAGS::PRINT_TREE:
 		if (temp)
 		{
-			traverseTree(temp->GetLeftChild(), FLAGS::PRINT);
-			traverseTree(temp->GetRightChild(), FLAGS::PRINT);
+			traverseTree(temp->GetLeftChild(), FLAGS::PRINT_TREE);
+			traverseTree(temp->GetRightChild(), FLAGS::PRINT_TREE);
 		}
 		else
 		{
+			//leaf node
 			std::cout <<
 				"Binary code: " <<
 				_node->GetSymbol() <<
@@ -194,20 +151,16 @@ void HuffmanTree::init()
 
 void HuffmanTree::reset()
 {
-	mText.clear();
-	mPath.clear();
-	mBinaryCode.clear();
+
 	mRoot.reset();
 	mCharsnFreq.clear();
-	mSymbolsMap.clear();
 	mNodes.clear();
 
 	return;
 }
 
-void HuffmanTree::printCompression()
+void HuffmanTree::computeBitSize()
 {
-	std::cout << "Bits uncompressed: " << mText.size() * 8 << ". Bits compressed: " << mCharsnFreq.size() * 8 << ". " << std::endl;
 }
 
 HuffmanTree::HuffmanTree()
@@ -233,7 +186,6 @@ bool HuffmanTree::MainFromString(const std::string & _text)
 	if (mRoot)
 		reset();
 
-	mText = _text;
 	computeFrequency();
 	buildTree();
 	traverseTree(mRoot, FLAGS::CREATE_BINARY_CODE);
@@ -248,16 +200,14 @@ bool HuffmanTree::MainFromTextFile(const std::string & _path)
 	if (mRoot)
 		reset();
 
-	mPath = _path;
-	readFromFile();
+	readFromFile(_path);
 	computeFrequency();
 	buildTree();
 	traverseTree(mRoot, FLAGS::CREATE_BINARY_CODE);
-	buildBinaryCode();
+
 
 #ifdef _DEBUG
-	printCompression();
-	PrintTree();
+
 #endif
 
 	return true;
@@ -277,7 +227,7 @@ bool HuffmanTree::PrintTree()
 	if (!mRoot)
 		return false;
 	
-	traverseTree(mRoot, FLAGS::PRINT);
+	traverseTree(mRoot, FLAGS::PRINT_TREE);
 	return true;
 }
 
@@ -285,9 +235,4 @@ bool HuffmanTree::ResetTree()
 {
 	reset();
 	return true;
-}
-
-std::string HuffmanTree::GetBinaryCode() const
-{
-	return mBinaryCode;
 }

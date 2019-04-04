@@ -32,5 +32,11 @@
     <ClInclude Include="LeafNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BitWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
