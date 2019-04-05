@@ -56,6 +56,9 @@ public:
 
 	std::string & GetTreeCode()
 	{
+		if (!mTreeCode.empty())
+			return mTreeCode;
+
 		for (auto t = mSymbolsMap.begin(); t != mSymbolsMap.end(); ++t)
 		{
 			mTreeCode += t->second;
@@ -79,10 +82,4 @@ public:
 		return; 
 	}
 
-	void DebugPrint(const std::string & _text)
-	{
-		std::cout << mTempCode << std::endl;
-		std::cout << GetTotalBinaryCodeString(_text) << std::endl;
-		std::cout << GetTreeCode() << std::endl;
-	}
 };

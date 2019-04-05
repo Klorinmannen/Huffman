@@ -169,12 +169,23 @@ void HuffmanTree::computeSize()
 		encodedSize += p->second.length() * t->second;
 	}
 
-	treeSize = mBitWriter.GetTreeCode().length();
+	auto code = mBitWriter.GetTreeCode();
+	for (auto t = code.begin(); t != code.end(); ++t)
+	{
+		if (*t != '1' && *t != '0')
+		{
+			treeSize += 8;
+		}
+
+		treeSize += 1;
+	}
+
+	//treeSize = mBitWriter.GetTreeCode().length();
 	encodedTotalBitSize = treeSize + encodedSize;
-	unEncodedSize = mFileReader.GetText().length();
+	unEncodedSize = mFileReader.GetText().length() * 8;
 
 	debugPrint("Coded: " + std::to_string(encodedTotalBitSize) + " Bits or " + std::to_string(encodedTotalBitSize / 8) + " Bytes");
-	debugPrint("Uncoded: " + std::to_string(unEncodedSize * 8 * 8) + " Bits or " + std::to_string(unEncodedSize * 8) + " Bytes");
+	debugPrint("Uncoded: " + std::to_string(unEncodedSize) + " Bits or " + std::to_string(unEncodedSize / 8) + " Bytes");
 }
 
 void HuffmanTree::debugPrint(const std::string & _string)
@@ -211,7 +222,8 @@ bool HuffmanTree::MainFromString(const std::string & _text)
 	traverseTree(mRoot, FLAGS::CREATE_BINARY_CODE);
 
 #ifdef _DEBUG
-	mBitWriter.DebugPrint(_text);
+	debugPrint(mBitWriter.GetTotalBinaryCodeString(mFileReader.GetText()) + " " + std::to_string(mBitWriter.GetTotalBinaryCodeString(mFileReader.GetText()).length()));
+	debugPrint(mBitWriter.GetTreeCode());
 #endif
 
 	computeSize();
@@ -233,7 +245,8 @@ bool HuffmanTree::MainFromTextFile(const std::string & _path)
 	traverseTree(mRoot, FLAGS::CREATE_BINARY_CODE);
 
 #ifdef _DEBUG
-	mBitWriter.DebugPrint(mFileReader.GetText());
+	debugPrint(mBitWriter.GetTotalBinaryCodeString(mFileReader.GetText()) + " " + std::to_string(mBitWriter.GetTotalBinaryCodeString(mFileReader.GetText()).length()));
+	debugPrint(mBitWriter.GetTreeCode());
 #endif
 
 
