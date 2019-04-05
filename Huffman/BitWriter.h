@@ -3,9 +3,6 @@
 
 class BitWriter
 {
-public:
-	enum CODE_TYPE { TOTAL_TYPE, TREE_TYPE };
-
 private:
 
 	std::string mTempCode;
@@ -23,11 +20,7 @@ private:
 		return;
 	}
 public:
-	BitWriter()
-	{
-
-	}
-
+	BitWriter(){}
 	~BitWriter()
 	{
 		reset();
@@ -59,10 +52,7 @@ public:
 		return mTotalBinaryCode;
 	}
 
-	std::string & GetBinaryCode()
-	{
-		return mTempCode;
-	}
+	std::string & GetBinaryCode() { return mTempCode; }
 
 	std::string & GetTreeCode()
 	{
@@ -75,9 +65,24 @@ public:
 		return mTreeCode;
 	}
 
-	void Reset()
+	std::unordered_map<char, std::string> & GetSymbolsMap() { return mSymbolsMap; }
+
+	void Clear(){ reset(); return; }
+	
+	void Init(const unsigned int & _size) 
+	{ 
+		mTempCode = "";
+		mTotalBinaryCode = "";
+		mTreeCode = "";
+		mSymbolsMap.reserve(_size);
+
+		return; 
+	}
+
+	void DebugPrint(const std::string & _text)
 	{
-		reset();
-		return;
+		std::cout << mTempCode << std::endl;
+		std::cout << GetTotalBinaryCodeString(_text) << std::endl;
+		std::cout << GetTreeCode() << std::endl;
 	}
 };

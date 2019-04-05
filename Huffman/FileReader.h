@@ -8,13 +8,10 @@ private:
 	std::string mText;
 
 public:
-	FileReader()
-	{
-
-	}
+	FileReader() {}
 	~FileReader()
 	{
-
+		mText.clear();
 	}
 
 	void ReadFile(const std::string & _path)
@@ -31,18 +28,10 @@ public:
 		return;
 	}
 
-	void InsertString(const std::string & _text)
-	{
-		mText = _text;
-	}
+	void InsertString(const std::string & _text) { mText = _text; return; } //For debugging
 
-	std::string GetText() const
-	{
-		return mText;
-	}
+	std::string GetText() const { return mText; }
 	
-	void Reset()
-	{
-		mText.clear();
-	}
+	void Clear() { mText.clear(); return; }
+	void Init() { mText = ""; return; }
 };

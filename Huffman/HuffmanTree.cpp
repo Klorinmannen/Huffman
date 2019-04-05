@@ -7,26 +7,8 @@ void HuffmanTree::readFromFile(const std::string & _path)
 
 void HuffmanTree::computeFrequency()
 {
-	//For each time a character in the text appears, +1 frequency.
-	//For each character check if theres a frequency and if there is, store char with its frequency
 	
-	std::string temp = mFileReader.GetText();
-	for (auto text = temp.begin(); text != temp.end(); ++text)
-	{
-		if (mCharsFreq[static_cast<int>(*text)].first == '\0')
-			mCharsFreq[static_cast<int>(*text)].first = *text;
-
-		mCharsFreq[static_cast<int>(*text)].second += 1;
-	}
-
-	//Clean up empty spaces
-	for (auto obj = mCharsFreq.begin(); obj != mCharsFreq.end();)
-	{
-		if (obj->first == '\0')
-			obj = mCharsFreq.erase(obj);
-		else
-			obj++;
-	}
+	mFrequencyReader.ComputeFrequency(mFileReader.GetText());
 
 	return;
 }
@@ -36,12 +18,12 @@ void HuffmanTree::buildTree()
 	std::shared_ptr<LeafNode> pLeafOne = nullptr;
 	std::shared_ptr<LeafNode> pLeafTwo = nullptr;
 	std::shared_ptr<InternalNode> pInternalPtr = nullptr;
-
-	for (unsigned int i = 0; i < mCharsFreq.size(); i++)
+	auto tempVec = mFrequencyReader.GetFreqsNSymbols();
+	for (auto t = tempVec.begin(); t != tempVec.end(); ++t)
 	{
 		pLeafOne = std::make_shared<LeafNode>();
-		pLeafOne->SetWeigth(mCharsFreq[i].second);
-		pLeafOne->SetSymbol(mCharsFreq[i].first);
+		pLeafOne->SetWeigth(t->second);
+		pLeafOne->SetSymbol(t->first);
 		mNodes.push_back(pLeafOne);
 	}
 
@@ -139,27 +121,65 @@ void HuffmanTree::traverseTree(const std::shared_ptr<LeafNode>& _node, const int
 
 void HuffmanTree::init()
 {
-	mCharsFreq.resize(ASCII_SIZE);
-	for (auto obj = mCharsFreq.begin(); obj != mCharsFreq.end(); ++obj)
-		*obj = std::make_pair('\0', 0);
-
+	mFrequencyReader.Init(ASCII_SIZE);
+	mBitWriter.Init(ASCII_SIZE);
+	mFileReader.Init();
 }
 
-void HuffmanTree::reset()
-{
 
+void HuffmanTree::Init()
+{
+	init();
+}
+
+void HuffmanTree::ClearAll()
+{
 	mRoot.reset();
-	mCharsFreq.clear();
-	mCharsFreq.resize(ASCII_SIZE);
 	mNodes.clear();
-	mBitWriter.Reset();
-	mFileReader.Reset();
+	mFrequencyReader.Clear();
+	mBitWriter.Clear();
+	mFileReader.Clear();
 
 	return;
 }
 
-void HuffmanTree::computeBitSize()
+
+void HuffmanTree::reset()
 {
+	mRoot.reset();
+	mNodes.clear();
+	mFrequencyReader.Init(ASCII_SIZE);
+	mBitWriter.Clear();
+	mFileReader.Clear();
+
+	return;
+}
+
+void HuffmanTree::computeSize()
+{
+
+	auto map = mBitWriter.GetSymbolsMap();
+	auto freqs = mFrequencyReader.GetFreqsNSymbols();
+	encodedSize = 0;
+	treeSize = 0;
+
+	for (auto t = freqs.begin(); t != freqs.end(); ++t)
+	{
+		auto p = map.find(t->first);
+		encodedSize += p->second.length() * t->second;
+	}
+
+	treeSize = mBitWriter.GetTreeCode().length();
+	encodedTotalBitSize = treeSize + encodedSize;
+	unEncodedSize = mFileReader.GetText().length();
+
+	debugPrint("Coded: " + std::to_string(encodedTotalBitSize) + " Bits or " + std::to_string(encodedTotalBitSize / 8) + " Bytes");
+	debugPrint("Uncoded: " + std::to_string(unEncodedSize * 8 * 8) + " Bits or " + std::to_string(unEncodedSize * 8) + " Bytes");
+}
+
+void HuffmanTree::debugPrint(const std::string & _string)
+{
+	std::cout << _string << std::endl;
 }
 
 HuffmanTree::HuffmanTree()
@@ -190,8 +210,12 @@ bool HuffmanTree::MainFromString(const std::string & _text)
 	buildTree();
 	traverseTree(mRoot, FLAGS::CREATE_BINARY_CODE);
 
-	std::cout << mBitWriter.GetTotalBinaryCodeString(mFileReader.GetText()) << std::endl;
-	std::cout << mBitWriter.GetTreeCode() << std::endl;
+#ifdef _DEBUG
+	mBitWriter.DebugPrint(_text);
+#endif
+
+	computeSize();
+
 
 	return true;
 }
@@ -208,14 +232,13 @@ bool HuffmanTree::MainFromTextFile(const std::string & _path)
 	buildTree();
 	traverseTree(mRoot, FLAGS::CREATE_BINARY_CODE);
 
-
-	std::cout << mBitWriter.GetTotalBinaryCodeString(mFileReader.GetText()) << std::endl;
-	std::cout << mBitWriter.GetTreeCode() << std::endl;
-
-
 #ifdef _DEBUG
-
+	mBitWriter.DebugPrint(mFileReader.GetText());
 #endif
+
+
+
+	computeSize();
 
 	return true;
 }

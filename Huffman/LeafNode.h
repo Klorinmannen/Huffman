@@ -21,11 +21,5 @@ public:
 	char GetSymbol() const { return mSymbol; }
 	unsigned int GetWeight() const { return mWeight; }
 	std::string GetBindaryCode() const { return mBinaryCode; }
-/*
-	bool operator<(const LeafNode & node) 
-	{
-		return node.GetWeight() < mWeight;
-	}
-*/
 
 };

@@ -10,7 +10,7 @@ private:
 	
 public:
 	InternalNode() { mLeftChild = nullptr; mRightChild = nullptr; }
-	~InternalNode(){}
+	virtual ~InternalNode(){}
 
 	void SetLeftChild(const std::shared_ptr<LeafNode> & _node) { mLeftChild = _node; }
 	void SetRightChild(const std::shared_ptr<LeafNode> & _node) { mRightChild = _node; }
