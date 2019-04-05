@@ -31,6 +31,11 @@ public:
 		return;
 	}
 
+	void InsertString(const std::string & _text)
+	{
+		mText = _text;
+	}
+
 	std::string GetText() const
 	{
 		return mText;

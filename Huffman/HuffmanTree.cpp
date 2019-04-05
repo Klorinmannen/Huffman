@@ -150,6 +150,7 @@ void HuffmanTree::reset()
 
 	mRoot.reset();
 	mCharsFreq.clear();
+	mCharsFreq.resize(ASCII_SIZE);
 	mNodes.clear();
 	mBitWriter.Reset();
 	mFileReader.Reset();
@@ -184,9 +185,13 @@ bool HuffmanTree::MainFromString(const std::string & _text)
 	if (mRoot)
 		reset();
 
+	mFileReader.InsertString(_text);
 	computeFrequency();
 	buildTree();
 	traverseTree(mRoot, FLAGS::CREATE_BINARY_CODE);
+
+	std::cout << mBitWriter.GetTotalBinaryCodeString(mFileReader.GetText()) << std::endl;
+	std::cout << mBitWriter.GetTreeCode() << std::endl;
 
 	return true;
 }
@@ -203,14 +208,10 @@ bool HuffmanTree::MainFromTextFile(const std::string & _path)
 	buildTree();
 	traverseTree(mRoot, FLAGS::CREATE_BINARY_CODE);
 
-	std::string test;
-	test = mBitWriter.GetTotalBinaryCodeString(mFileReader.GetText());
-	test = mBitWriter.GetTreeCode();
 
-	if (1)
-	{
+	std::cout << mBitWriter.GetTotalBinaryCodeString(mFileReader.GetText()) << std::endl;
+	std::cout << mBitWriter.GetTreeCode() << std::endl;
 
-	}
 
 #ifdef _DEBUG
 
@@ -228,7 +229,7 @@ bool HuffmanTree::PrintTree()
 	return true;
 }
 
-bool HuffmanTree::ResetTree()
+bool HuffmanTree::Reset()
 {
 	reset();
 	return true;

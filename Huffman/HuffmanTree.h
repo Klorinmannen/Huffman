@@ -49,6 +49,6 @@ public:
 	bool MainFromString(const std::string & _text);
 	bool MainFromTextFile(const std::string & _path);
 	bool PrintTree();
-	bool ResetTree();
+	bool Reset();
 
 };
